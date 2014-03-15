@@ -2,7 +2,6 @@ package cz.jurankovi.docker.maven;
 
 import java.util.List;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -17,18 +16,13 @@ public class ContainerStopByImageMojo extends AbstractDockerMojo {
     @Parameter(required = true)
     private String imageId;
 
-    public void execute() throws MojoExecutionException {
-        try {
-            DockerClient client = getClient();
-            List<Container> containers = getClient().listContainers(false);
-            for (Container c : containers) {
-                if (imageId.equalsIgnoreCase(c.getImage())) {
-                    client.stopContainer(c.getId());
-                }
+    public void doExecute() throws DockerException {
+        DockerClient client = getClient();
+        List<Container> containers = getClient().listContainers(false);
+        for (Container c : containers) {
+            if (imageId.equalsIgnoreCase(c.getImage())) {
+                client.stopContainer(c.getId());
             }
-        } catch (DockerException e) {
-            // TODO log
-            throw new MojoExecutionException(e.getMessage());
         }
     }
 

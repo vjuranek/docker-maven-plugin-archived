@@ -5,6 +5,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import com.kpelykh.docker.client.DockerClient;
+import com.kpelykh.docker.client.DockerException;
 
 public abstract class AbstractDockerMojo extends AbstractMojo  {
 
@@ -15,6 +16,15 @@ public abstract class AbstractDockerMojo extends AbstractMojo  {
         return new DockerClient(dockerUrl);
     }
     
-    public abstract void execute() throws MojoExecutionException;
+    public void execute() throws MojoExecutionException {
+        try {
+            doExecute();
+        } catch (DockerException e) {
+            // TODO log
+            throw new MojoExecutionException(e.getMessage());
+        }
+    }
+    
+    public abstract void doExecute() throws DockerException, MojoExecutionException;
     
 }
